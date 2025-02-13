@@ -9,6 +9,22 @@ class Student
     int rollno ;
     int age ;
 
+    Student()
+    {
+        cout << "In Default Constructor" << endl ;
+    }
+
+    Student(char n, int r, int a)
+    {
+        // this->name = name ;
+        // this->rollno = rollno ;
+        // this->age = age ;
+
+        name = n ;
+        rollno = r ;
+        age = a ;
+    }
+
     void introduceYourself()
     {
         cout << name << " is " << age << " years old and has rollno " << rollno << "." << endl ;
@@ -22,10 +38,14 @@ class Student
 
 int main()
 {
-    // Student s ;
-    // s.name = 'A' ;
-    // s.rollno = 70 ;
-    // s.age = 20 ;
+    Student s ;
+    s.name = 'A' ;
+    s.rollno = 70 ;
+    s.age = 20 ;
+    s.introduceYourself() ;
+
+    Student s1('B', 100, 35) ;
+    s1.introduceYourself() ;
 
     // cout << s.name << endl ;
     // cout << s.rollno << endl ;
@@ -39,14 +59,14 @@ int main()
     // s1.rollno = 700 ;
     // s1.age = 200 ;
 
-    // s1.introduceYourself() ;
+    // s.introduceYourself() ;
 
-    Student *s = new Student() ;
-    s->name = 'A' ;
-    (*s).age = 15 ;
-    (*s).rollno = 100 ;
+    // Student *s = new Student() ;
+    // s->name = 'A' ;
+    // (*s).age = 15 ;
+    // (*s).rollno = 100 ;
 
-    cout << s->name  << endl ;
+    // cout << s->name  << endl ;
 
     return 0 ;
 }

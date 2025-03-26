@@ -61,6 +61,41 @@ class BinaryTree
         return nn ;
     }
 
+    // https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/
+    public:
+    BinaryTree(int *pre, int *in, int n)
+    {
+        root = construct(pre, 0, n-1, in, 0, n-1) ;
+    }
+
+    private:
+    Node* construct(int *pre, int plo, int phi, int *in, int ilo, int ihi)
+    {
+        if(plo > phi || ilo > ihi)
+            return NULL ;
+
+        Node *nn = new Node(pre[plo]) ;
+
+        int si = -1 ;
+        for(int i = ilo; i <= ihi ; i++)
+        {
+            if (in[i] == pre[plo])
+            {
+               si = i ;
+               break ;
+            }
+        }
+
+        int nel = si - ilo ;
+
+        nn->left = construct(pre, plo+1, plo+nel, in, ilo, si-1) ;
+        nn->right = construct(pre, plo+nel+1, phi, in, si+1, ihi) ;
+
+        return nn ;
+
+    }
+
+
     public :
     void display()
     {
@@ -92,6 +127,7 @@ class BinaryTree
         
     }
 
+    // https://www.geeksforgeeks.org/problems/size-of-binary-tree/0
     public :
     int size()
     {
@@ -110,6 +146,26 @@ class BinaryTree
         return ls + rs + 1 ;
     }
 
+    // https://www.geeksforgeeks.org/problems/size-of-binary-tree/0
+    public :
+    int sum()
+    {
+        return sum(root) ;
+    }
+
+    private:
+    int sum(Node *node)
+    {
+        if(node == NULL)
+            return 0;
+
+        int ls = sum(node->left) ;
+        int rs = sum(node->right) ;
+
+        return ls + rs + node->data ;
+    }
+
+    // https://www.geeksforgeeks.org/find-maximum-or-minimum-in-binary-tree/
     public :
     int maximum()
     {
@@ -128,6 +184,8 @@ class BinaryTree
         return max(node->data, max(lm,rm)) ;
     }
 
+    // https://www.geeksforgeeks.org/find-the-maximum-depth-or-height-of-a-tree/
+    // https://leetcode.com/problems/maximum-depth-of-binary-tree/
     public :
     int height()
     {
@@ -146,6 +204,7 @@ class BinaryTree
         return max(lh,rh) + 1 ;
     }
 
+    // https://www.geeksforgeeks.org/search-a-node-in-binary-tree/
     public :
     bool find(int item)
     {
@@ -189,6 +248,7 @@ class BinaryTree
 
     }
 
+    // https://leetcode.com/problems/binary-tree-preorder-traversal/
     public :
     void preorder()
     {
@@ -206,6 +266,7 @@ class BinaryTree
         preorder(node->right) ;
     }
 
+    // https://leetcode.com/problems/binary-tree-inorder-traversal/
     public :
     void inorder()
     {
@@ -221,8 +282,9 @@ class BinaryTree
         inorder(node->left) ;
         cout << node->data << " " ;
         inorder(node->right) ;
-    }
+    }   
 
+    // https://leetcode.com/problems/binary-tree-postorder-traversal/
     public :
     void postorder()
     {
@@ -269,6 +331,7 @@ class BinaryTree
 
     }
 
+    // https://leetcode.com/problems/binary-tree-level-order-traversal/
     public:
     void levelorderlinewise()
     {
@@ -307,6 +370,7 @@ class BinaryTree
         cout << "\n" ;
     }
 
+    // https://leetcode.com/problems/diameter-of-binary-tree/
     int dia_ans = 0 ;
 
     public :
@@ -329,12 +393,89 @@ class BinaryTree
         diameter(node->right) ;
     }
 
+    public :
+    int diameter2()
+    {
+        return diameter2(root) ;
+    }
+
+    private :
+    int diameter2(Node *node)
+    {
+        if(node == NULL)
+            return 0 ;
+
+        int ld = diameter2(node->left) ;
+        int rd = diameter2(node->right) ;       
+        int self_diameter_root = height(node->left) + height(node->right) + 2 ;
+        
+        return max(self_diameter_root, max(ld,rd)) ;
+    }
+
+    // https://www.geeksforgeeks.org/find-largest-subtree-sum-tree/
+    int subtree_sum_ans = 0 ;
+
+    public :
+    int maxSubtreeSum()
+    {
+        maxSubtreeSum(root) ;
+        return subtree_sum_ans ;
+    }
+
+    private :
+    void maxSubtreeSum(Node *node)
+    {
+        if(node == NULL)
+            return ;
+        
+        subtree_sum_ans = max(subtree_sum_ans, sum(node)) ;
+
+        maxSubtreeSum(node->left) ;
+        maxSubtreeSum(node->right) ;
+    }
+
+    public :
+    int maxSubtreeSum2()
+    {
+        return maxSubtreeSum2(root) ;
+    }
+
+    private :
+    int maxSubtreeSum2(Node *node)
+    {
+        if(node == NULL)
+            return 0 ;
+        
+        int lmss = maxSubtreeSum2(node->left) ;
+        int rmss = maxSubtreeSum2(node->right) ;
+        int smss = sum(node) ;
+
+        return max(smss, max(lmss, rmss)) ;
+    }
+
+    // https://leetcode.com/problems/same-tree/
+    bool isSameTree(Node* p, Node* q) {
+        
+        if(p == NULL && q == NULL)
+            return true ;
+        
+        if(p == NULL || q == NULL)
+            return false ;
+
+        bool li = isSameTree(p->left, q->left) ;
+        bool ri = isSameTree(p->right, q->right) ;
+
+        return (p->data == q->data) && li && ri ;
+    }
+    
 } ;
 
 int main()
 {
-    // 10 1 20 1 40 0 0 1 50 0 0 1 30 1 60 0 0 0 
-    BinaryTree bt ;
+    // 10 1 -20 1 -40 0 0 1 50 0 0 1 -30 1 -60 0 0 0 
+    int pre[] = {10,20,40,50,90,30,60,70,80} ;
+    int in[] = {40,20,90,50,10,30,70,60,80} ;
+    BinaryTree bt(pre,in,9) ;
     bt.display() ;
     
     cout << bt.size() << endl ;
@@ -355,5 +496,10 @@ int main()
     // bt.display2() ;
 
     cout << bt.diameter() << endl ;
+    cout << bt.diameter2() << endl ;
+
+    cout << bt.maxSubtreeSum() << endl ;
+    cout << bt.maxSubtreeSum2() << endl ;
+
     return 0 ;
 }

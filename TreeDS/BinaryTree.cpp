@@ -62,24 +62,57 @@ class BinaryTree
     }
 
     // https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/
+    // public:
+    // BinaryTree(int *pre, int *in, int n)
+    // {
+    //     root = construct(pre, 0, n-1, in, 0, n-1) ;
+    // }
+
+    // private:
+    // Node* construct(int *pre, int plo, int phi, int *in, int ilo, int ihi)
+    // {
+    //     if(plo > phi || ilo > ihi)
+    //         return NULL ;
+
+    //     Node *nn = new Node(pre[plo]) ;
+
+    //     int si = -1 ;
+    //     for(int i = ilo; i <= ihi ; i++)
+    //     {
+    //         if (in[i] == pre[plo])
+    //         {
+    //            si = i ;
+    //            break ;
+    //         }
+    //     }
+
+    //     int nel = si - ilo ;
+
+    //     nn->left = construct(pre, plo+1, plo+nel, in, ilo, si-1) ;
+    //     nn->right = construct(pre, plo+nel+1, phi, in, si+1, ihi) ;
+
+    //     return nn ;
+
+    // }
+
     public:
-    BinaryTree(int *pre, int *in, int n)
+    BinaryTree(int *post, int *in, int n)
     {
-        root = construct(pre, 0, n-1, in, 0, n-1) ;
+        root = construct(post, 0, n-1, in, 0, n-1) ;
     }
 
     private:
-    Node* construct(int *pre, int plo, int phi, int *in, int ilo, int ihi)
+    Node* construct(int *post, int plo, int phi, int *in, int ilo, int ihi)
     {
         if(plo > phi || ilo > ihi)
             return NULL ;
 
-        Node *nn = new Node(pre[plo]) ;
+        Node *nn = new Node(post[phi]) ;
 
         int si = -1 ;
         for(int i = ilo; i <= ihi ; i++)
         {
-            if (in[i] == pre[plo])
+            if (in[i] == post[phi])
             {
                si = i ;
                break ;
@@ -88,10 +121,51 @@ class BinaryTree
 
         int nel = si - ilo ;
 
-        nn->left = construct(pre, plo+1, plo+nel, in, ilo, si-1) ;
-        nn->right = construct(pre, plo+nel+1, phi, in, si+1, ihi) ;
+        nn->left = construct(post, plo, plo+nel-1, in, ilo, si-1) ;
+        nn->right = construct(post, plo+nel, phi-1, in, si+1, ihi) ;
 
         return nn ;
+
+    }
+
+    public:
+    BinaryTree(int *level, int n)
+    {
+        construct(level, n) ;
+    }
+
+    private:
+    void construct(int* level, int n)
+    {
+        queue<Node*> q ;
+        root = new Node(level[0]) ;
+        q.push(root) ;
+
+        int i = 1;
+        while(!q.empty())
+        {
+            // remove
+            Node *rn = q.front() ;
+            q.pop() ;
+
+            // left child
+            if(level[i] != -1)
+            {
+                Node *leftnode = new Node(level[i]) ;
+                rn->left = leftnode ;
+                q.push(leftnode) ;
+            }
+            i++ ;
+
+            // right child
+            if(level[i] != -1)
+            {
+                Node *rightnode = new Node(level[i]) ;
+                rn->right = rightnode ;
+                q.push(rightnode) ;
+            }        
+            i++ ;
+        }
 
     }
 
@@ -467,15 +541,44 @@ class BinaryTree
 
         return (p->data == q->data) && li && ri ;
     }
+
+    // https://leetcode.com/problems/balanced-binary-tree/
+    bool is_bal_ans = true ;
+    
+    public :
+    int isBalanced()
+    {
+        isBalanced(root) ;
+        return is_bal_ans ;
+    }
+
+    private :
+    void isBalanced(Node *node)
+    {
+        if(node == NULL)
+            return ;
+        
+        int bf = height(node->left) - height(node->right) ;
+
+        if(!(bf == -1 || bf == 0 || bf == 1))
+            is_bal_ans = false ;
+
+        isBalanced(node->left) ;
+        isBalanced(node->right) ;
+    }
     
 } ;
 
 int main()
 {
     // 10 1 -20 1 -40 0 0 1 50 0 0 1 -30 1 -60 0 0 0 
-    int pre[] = {10,20,40,50,90,30,60,70,80} ;
-    int in[] = {40,20,90,50,10,30,70,60,80} ;
-    BinaryTree bt(pre,in,9) ;
+    // int pre[] = {10,20,40,50,90,30,60,70,80} ;
+    // int in[] = {40,20,90,50,10,30,70,60,80} ;
+    // int post[] = {40,80,50,20,60,100,90,70,30,10} ;
+    // int in[] =   {40,20,50,80,10,60,30,90,100,70} ;
+    // BinaryTree bt(post,in,10) ;
+    int level[] = {10,20,30,40,-1,-1,50,-1,-1,60,70,-1,-1,-1,-1} ;
+    BinaryTree bt(level, 15) ;
     bt.display() ;
     
     cout << bt.size() << endl ;

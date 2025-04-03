@@ -258,6 +258,24 @@ class BinaryTree
         return max(node->data, max(lm,rm)) ;
     }
 
+    public :
+    int minimum()
+    {
+        return minimum(root) ;
+    }
+
+    private:
+    int minimum(Node *node)
+    {
+        if(node == NULL)
+            return INT_MAX;
+            
+        int lm = minimum(node->left) ;
+        int rm = minimum(node->right) ;
+
+        return min(node->data, min(lm,rm)) ;
+    }
+
     // https://www.geeksforgeeks.org/find-the-maximum-depth-or-height-of-a-tree/
     // https://leetcode.com/problems/maximum-depth-of-binary-tree/
     public :
@@ -566,7 +584,50 @@ class BinaryTree
         isBalanced(node->left) ;
         isBalanced(node->right) ;
     }
+
+    public :
+    int isBalanced2()
+    {
+        return isBalanced2(root) ;
+    }
+
+    private :
+    bool isBalanced2(Node *node)
+    {
+        if(node == NULL)
+            return true ;
+
+        bool lb = isBalanced2(node->left) ;
+        bool rb = isBalanced2(node->right) ;
+
+        int bf = height(node->left) - height(node->right) ;
+
+        if(lb && rb && (bf == -1 || bf == 0 || bf == 1))
+            return true ;
+        else
+            return false ;
+    }
     
+    public :
+    bool isBST()
+    {
+        return isBST(root) ;
+    }
+
+    private :
+    bool isBST(Node* node)
+    {
+        if(node == NULL)
+            return true ;
+
+        bool left_bst = isBST(node->left) ;
+        bool right_bst = isBST(node->right) ;
+
+        if((node->data >= maximum(node->left) && node->data <= minimum(node->right)) && left_bst && right_bst)
+            return true ;
+        else
+            return false ;
+    }
 } ;
 
 int main()
